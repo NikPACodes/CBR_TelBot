@@ -24,7 +24,7 @@ class DateFutureError(CBRException):
     def __init__(self, i_date):
         date = i_date.replace('/', '.')
         date_now = datetime.now().strftime('%d.%m.%Y')
-        self.message = f'{date} -> Не должна превышить текущую дату {date_now}!'
+        self.message = f'{date} -> Не должна превышать текущую дату {date_now}!'
 
 
 # Ошибка: введен неверный объем
