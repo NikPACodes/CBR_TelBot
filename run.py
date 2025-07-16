@@ -134,7 +134,7 @@ def oper_info(message: telebot.types.Message, i_categ=''):
     if i_categ:
         name_categ = name_categ_op_inf[i_categ] #Получаем наименование категории
     msg = bot.send_message(message.chat.id, f'Какая информация по категории "{name_categ}" вам интересна?\
-                                            \nВыберети "Последняя информация" - чтобы увидить последние 15 новостей\
+                                            \nВыберите "Последняя информация" - чтобы увидеть последние 15 новостей\
                                             \nЛибо укажите дату за которую хотите получить информацию в формате: 01.01.2001',
                            reply_markup=markup)
     bot.register_next_step_handler(msg, oper_info_step, i_categ)
@@ -202,7 +202,7 @@ def check_callback_data(callback):
     #Проверка по категориям
     if callback.data in ('dkp', 'key-indicators', 'rbr', 'statistics', 'analytics', 'securities_market',
                          'hd_base', 'ec_research', 'all_categ'):
-        CBR_Bot.load_oper_info(callback.data) #Загрузка оперативной информации
+        CBR_Bot.load_oper_info() #Загрузка оперативной информации
         oper_info(callback.message, callback.data)
 
 
@@ -248,23 +248,23 @@ def convert_step(message):
         try:
             #Вызываем функцию конвертации валюты
             if pattern_1.match(msg_text):
-                conv_curr = CBR_Bot.convert_currency(volume=msg_text)
+                conv_curr = CBR_Bot.convert_currency(i_volume=msg_text)
             elif pattern_2.match(msg_text):
                 vol, curr = msg_text.split(" ")
-                conv_curr = CBR_Bot.convert_currency(volume=vol, code_from=curr)
+                conv_curr = CBR_Bot.convert_currency(i_volume=vol, i_code_from=curr)
             elif pattern_3.match(msg_text):
                 vol, currs = msg_text.split(" ")
                 curr1, curr2 = currs.split("/")
-                conv_curr = CBR_Bot.convert_currency(volume=vol, code_from=curr1, code_to=curr2)
+                conv_curr = CBR_Bot.convert_currency(i_volume=vol, i_code_from=curr1, i_code_to=curr2)
             elif pattern_4.match(msg_text):
                 date, vol, curr = msg_text.split(" ")
                 date = date.replace('.', '/')
-                conv_curr = CBR_Bot.convert_currency(date=date, volume=vol, code_from=curr)
+                conv_curr = CBR_Bot.convert_currency(i_date=date, i_volume=vol, i_code_from=curr)
             elif pattern_5.match(msg_text):
                 date, vol, currs = msg_text.split(" ")
                 curr1, curr2 = currs.split("/")
                 date = date.replace('.', '/')
-                conv_curr = CBR_Bot.convert_currency(date=date, volume=vol, code_from=curr1, code_to=curr2)
+                conv_curr = CBR_Bot.convert_currency(i_date=date, i_volume=vol, i_code_from=curr1, i_code_to=curr2)
             else:
                 text = f'"{message.text}" - Не соответствует образцу!'
 
@@ -296,7 +296,7 @@ def current_rate(message: telebot.types.Message):
 #Получение курса по валюте
 def current_rate_step(message):
     if message.text in ('Все', 'ALL'):
-        curr_rate_all = CBR_Bot.get_curr_rate(code_from='ALL')
+        curr_rate_all = CBR_Bot.get_curr_rate(i_code_from='ALL')
         bot.send_message(message.chat.id, curr_rate_all, reply_markup=clear_butt)
     elif message.text == 'Образец':
         example = 'Пример(по умолчанию на последнюю доступную дату):\
@@ -320,22 +320,22 @@ def current_rate_step(message):
         try:
             # Вызываем функцию получения курса
             if pattern_1.match(msg_text):
-                curr_rate = CBR_Bot.get_curr_rate(code_from=msg_text)
+                curr_rate = CBR_Bot.get_curr_rate(i_code_from=msg_text)
                 bot.send_message(message.chat.id, curr_rate, reply_markup=clear_butt)
             elif pattern_2.match(msg_text):
                 value = msg_text.split("/")
-                curr_rate = CBR_Bot.get_curr_rate(code_from=value[0], code_to=value[1])
+                curr_rate = CBR_Bot.get_curr_rate(i_code_from=value[0], i_code_to=value[1])
                 bot.send_message(message.chat.id, curr_rate, reply_markup=clear_butt)
             elif pattern_3.match(msg_text):
                 date, value = msg_text.split(" ")
                 date = date.replace('.', '/')
-                curr_rate = CBR_Bot.get_curr_rate(date=date, code_from=value)
+                curr_rate = CBR_Bot.get_curr_rate(i_date=date, i_code_from=value)
                 bot.send_message(message.chat.id, curr_rate, reply_markup=clear_butt)
             elif pattern_4.match(msg_text):
                 date, value = msg_text.split(" ")
                 date = date.replace('.', '/')
                 value = value.split("/")
-                curr_rate = CBR_Bot.get_curr_rate(date=date, code_from=value[0], code_to=value[1])
+                curr_rate = CBR_Bot.get_curr_rate(i_date=date, i_code_from=value[0], i_code_to=value[1])
                 bot.send_message(message.chat.id, curr_rate, reply_markup=clear_butt)
             else:
                 msg = bot.send_message(message.chat.id, f'"{message.text}" - Не соответствует образцу!')

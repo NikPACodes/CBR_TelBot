@@ -12,9 +12,9 @@ from databases import PostgreSQL
 class Convert:
     # Метод преобразования XML в словарь
     @classmethod
-    def conv_xml_to_dict(cls, elements):
+    def conv_xml_to_dict(cls, i_elements):
         result_dist = {}
-        for element in elements:
+        for element in i_elements:
             if len(element):
                 value = cls.conv_xml_to_dict(element)
             else:
@@ -41,8 +41,8 @@ class Convert:
         return result_dist
 
     @classmethod
-    def conv_xml_to_json(cls, data_xml):
-        dict_data = cls.conv_xml_to_dict(data_xml)
+    def conv_xml_to_json(cls, i_data_xml):
+        dict_data = cls.conv_xml_to_dict(i_data_xml)
         json_data = json.dumps(dict_data, ensure_ascii=False)
         return json_data
 
@@ -169,80 +169,31 @@ class CBRInfo:
 
     # Получение курса валют ЦБ на выбранную дату (по умолчанию: USD/RUB на ближайшую доступную дату)
     # (Формат дат %d/%m/%Y)
-    def get_curr_rate(self, date=datetime.now().strftime('%d/%m/%Y'), code_from='USD', code_to='RUB'):
+    def get_curr_rate(self, i_date=datetime.now().strftime('%d/%m/%Y'), i_code_from='USD', i_code_to='RUB'):
         sel_data=[]
-        sel_data = self.sel_data_ExchRates(date, code_from, code_to)
-        # # Проверка корректности даты
-        # try:
-        #     date_valid = datetime.strptime(date, '%d/%m/%Y').date()
-        #     if date_valid > datetime.now().date():
-        #         raise Exc.DateFutureError(date)
-        # except ValueError:
-        #     raise Exc.DateError(date)
-
-        # q_date = datetime.strptime(date, '%d/%m/%Y').strftime('%Y-%m-%d')
-        # q_sel_data = self.Query_ExchRates(q_date, code_from, code_to)
-        # q_sel_data = f"""SELECT cc.ID_CBR, cc.ISO_Code, ex.Date, ex.CurrRate \
-        #                  \nFROM ExchangeRatesCBR as ex \
-        #                  \nJOIN CurrCodesDirectCBR as cc \
-        #                    \nON ex.ID_CBR = cc.ID_CBR \
-        #                 \nWHERE ex.Date = '{q_date}'"""
-        # # Проверяем полученные коды валют
-        # if code_from != 'ALL':
-        #     self.check_curr_code(code_from)
-        #     q_sel_data = f"""SELECT cc.ID_CBR, cc.ISO_Code, ex.Date, ex.CurrRate \
-        #                      \nFROM ExchangeRatesCBR as ex \
-        #                      \nJOIN CurrCodesDirectCBR as cc ON ex.ID_CBR = cc.ID_CBR \
-        #                     \nWHERE ex.Date = '{q_date}' \
-        #                       \nAND cc.ISO_Code = '{code_from}'"""
-        # if code_to != 'RUB':
-        #     self.check_curr_code(code_to)
-        #     q_sel_data = f"""SELECT cc.ID_CBR, cc.ISO_Code, ex.Date, ex.CurrRate \
-        #                      \nFROM ExchangeRatesCBR as ex \
-        #                      \nJOIN CurrCodesDirectCBR as cc ON ex.ID_CBR = cc.ID_CBR \
-        #                     \nWHERE ex.Date = '{q_date}' \
-        #                       \nAND cc.ISO_Code in ('{code_from}', '{code_to}')"""
-
-        # try:
-        #     sel_data = self.__PostgresDB.execute_read_query(self._TestLocalDB, q_sel_data)
-        # except databases.DBException as err:
-        #     print(err.message)
-
-        # if not sel_data: # Если не нашли данных в БД берем их с сервера ЦБ и обновляем данные в БД
-        #     load_par = {'date_req': date} if date else {}
-        #     req = requests.get(self.__req_curr_rate, params=load_par)
-        #     root = etree.XML(req.content)
-        #     req_dict = Convert.conv_xml_to_dict(root)
-        #
-        #     try:
-        #         q_ins_rate = f"INSERT INTO ExchangeRatesCBR (ID_CBR, Date, CurrRate) VALUES (%s, %s, %s)"
-        #         for data in req_dict.get("Valute"):
-        #             self.__PostgresDB.execute_query(self._TestLocalDB, q_ins_rate, (data.get("@ID"), q_date, data.get('VunitRate').replace(',', '.')))
-        #         sel_data = self.__PostgresDB.execute_read_query(self._TestLocalDB, q_sel_data)
-        #     except databases.DBException as err:
-        #         print(err.message)
-        res_date = date.replace('/', '.')
+        sel_data = self.sel_data_ExchRates(i_date, i_code_from, i_code_to)
+        res_date = i_date.replace('/', '.')
         text = list()
         text.append('Курс ЦБ: ' + res_date)
 
-        if code_to != 'RUB':
+        if i_code_to != 'RUB':
             denom_from, denom_to = '', ''
 
         if sel_data:
             for bd_data in sel_data:
-                if code_from == 'ALL':
+                if i_code_from == 'ALL':
                     text.append(bd_data[1] + '/RUB - ' + str(bd_data[3]).replace('.', ','))
-                elif code_from == bd_data[1] and code_to == 'RUB':
-                    text.append(code_from + '/RUB - ' + str(bd_data[3]).replace('.', ','))
+                elif i_code_from == bd_data[1] and i_code_to == 'RUB':
+                    text.append(i_code_from + '/RUB - ' + str(bd_data[3]).replace('.', ','))
                     break
-                elif bd_data[1] in (code_from, code_to) and code_to != 'RUB':
-                    if code_from == bd_data[1]:
+                elif bd_data[1] in (i_code_from, i_code_to) and i_code_to != 'RUB':
+                    if i_code_from == bd_data[1]:
                         denom_from = bd_data[3]
-                    if code_to == bd_data[1]:
+                    if i_code_to == bd_data[1]:
                         denom_to = bd_data[3]
                     if denom_from and denom_to:
                         denom_calc = str(round((denom_from / denom_to), 4)).replace('.', ',')
-                        text.append(f'{code_from}/{code_to} - {denom_calc}')
+                        text.append(f'{i_code_from}/{i_code_to} - {denom_calc}')
                         break
         result = '\n'.join(text) if len(text) > 1 else f'Нет данных ЦБ на {res_date}'
         return result
@@ -250,88 +201,36 @@ class CBRInfo:
 
 
     # Конвертация валюты
-    def convert_currency(self, date=datetime.now().strftime('%d/%m/%Y'), volume=0, code_from='USD', code_to='RUB'):
-        # # Проверка корректности даты
-        # try:
-        #     date_valid = datetime.strptime(date, '%d/%m/%Y').date()
-        #     if date_valid > datetime.now().date():
-        #         raise Exc.DateFutureError(date)
-        # except ValueError:
-        #     raise Exc.DateError(date)
-
+    def convert_currency(self, i_date=datetime.now().strftime('%d/%m/%Y'), i_volume=0, i_code_from='USD', i_code_to='RUB'):
         # Проверка корректности введенного объема
         try:
-            volume = int(volume)
+            i_volume = int(i_volume)
         except ValueError:
-            raise Exc.VolumeError(volume)
+            raise Exc.VolumeError(i_volume)
 
-        sel_data = self.sel_data_ExchRates(date, code_from, code_to)
+        sel_data = self.sel_data_ExchRates(i_date, i_code_from, i_code_to)
 
-
-        # # Проверяем полученные коды валют
-        # if code_from != 'USD':
-        #     self.check_curr_code(code_from)
-        # if code_to != 'RUB':
-        #     self.check_curr_code(code_to)
-        # q_date = datetime.strptime(date, '%d/%m/%Y').strftime('%Y-%m-%d')
-        # q_sel_data = self.Query_ExchRates(q_date, code_from, code_to)
-        # try:
-        #     sel_data = self.__PostgresDB.execute_read_query(self._TestLocalDB, q_sel_data)
-        # except databases.DBException as err:
-        #     print(err.message)
-        #
-        # res_date = date.replace('/', '.')
-        #
-        # if not sel_data:  # Если не нашли данных в БД берем их с сервера ЦБ и обновляем данные в БД
-        #     load_par = {'date_req': date} if date else {}
-        #     req = requests.get(self.__req_curr_rate, params=load_par)
-        #     root = etree.XML(req.content)
-        #     req_dict = Convert.conv_xml_to_dict(root)
-        #
-
-
-
-        # if code_to != 'RUB':
-        #     denom_from, denom_to = float(0), float(0)
-        # res_conv = ''
-        # for data in sel_data:
-        #     if code_from == data.get('CharCode') and code_to == 'RUB':
-        #         res_conv = str(round(float(volume * float(data.get('VunitRate').replace(',', '.'))))).replace('.', ',')
-        #         break
-        #     elif data.get('CharCode') in (code_from, code_to) and code_to != 'RUB':
-        #         if code_from == data.get('CharCode'):
-        #             denom_from = float(data.get('VunitRate').replace(',', '.'))
-        #         if code_to == data.get('CharCode'):
-        #             denom_to = float(data.get('VunitRate').replace(',', '.'))
-        #         if denom_from and denom_to:
-        #             res_conv = str(round(float(volume * denom_from / denom_to), 2)).replace('.', ',')
-        #             break
-        if code_to != 'RUB':
+        if i_code_to != 'RUB':
             denom_from, denom_to = '', ''
 
         if sel_data:
             for bd_data in sel_data:
-                # if code_from == 'ALL':
-                #     text.append(bd_data[1] + '/RUB - ' + str(bd_data[3]).replace('.', ','))
-                if code_from == bd_data[1] and code_to == 'RUB':
-                    # text.append(code_from + '/RUB - ' + str(bd_data[3]).replace('.', ','))
-                    res_conv = str(round(float(volume * bd_data[3]), 4)).replace('.', ',')
+                if i_code_from == bd_data[1] and i_code_to == 'RUB':
+                    res_conv = str(round(float(i_volume * bd_data[3]), 4)).replace('.', ',')
                     break
-                elif bd_data[1] in (code_from, code_to) and code_to != 'RUB':
-                    if code_from == bd_data[1]:
+                elif bd_data[1] in (i_code_from, i_code_to) and i_code_to != 'RUB':
+                    if i_code_from == bd_data[1]:
                         denom_from = bd_data[3]
-                    if code_to == bd_data[1]:
+                    if i_code_to == bd_data[1]:
                         denom_to = bd_data[3]
                     if denom_from and denom_to:
-                        res_conv = str(round(float(volume * denom_from / denom_to), 4)).replace('.', ',')
-                        # denom_calc = str(round((denom_from / denom_to), 4)).replace('.', ',')
-                        # text.append(f'{code_from}/{code_to} - {denom_calc}')
+                        res_conv = str(round(float(i_volume * denom_from / denom_to), 4)).replace('.', ',')
                         break
 
-        result = {'date': date.replace('/', '.'),
-                  'volume': volume,
-                  'code_from': code_from,
-                  'code_to': code_to,
+        result = {'date': i_date.replace('/', '.'),
+                  'volume': i_volume,
+                  'code_from': i_code_from,
+                  'code_to': i_code_to,
                   'result': res_conv}
         return result
 
@@ -346,8 +245,6 @@ class CBRInfo:
             except ValueError:
                 raise Exc.DateError(date)
 
-        # req_text = f'{self.__req_key_rate}?UniDbQuery.Posted=True&UniDbQuery.From={i_date_from}&UniDbQuery.To={i_date_to}'
-        # req = requests.get(req_text)
         load_par = {'UniDbQuery.Posted': 'True', 'UniDbQuery.From': i_date_from, 'UniDbQuery.To': i_date_to}
         req = requests.get(self.__req_key_rate, params=load_par)
         root = etree.HTML(req.content)
@@ -362,7 +259,7 @@ class CBRInfo:
 
 
     # Загрузка оперативной информации
-    def load_oper_info(self, i_text):
+    def load_oper_info(self):
         last_upd = datetime.now() - self.oper_info_lload
         #Обновляем данные если последнее обновление было больше дня назад
         if last_upd.days >= 1:
@@ -420,9 +317,7 @@ class CBRInfo:
 
     # Выбор и обновление данных ExchangeRatesCBR
     def sel_data_ExchRates(self, i_date=datetime.now().strftime('%d/%m/%Y'), i_code_from='USD', i_code_to='RUB'):
-        # Выходная таблица
-        e_data=[]
-
+        e_data=[]   # Выходная таблица
         # Проверка корректности даты
         try:
             date_valid = datetime.strptime(i_date, '%d/%m/%Y').date()
