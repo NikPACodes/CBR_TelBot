@@ -1,4 +1,8 @@
 # CBR Telegram Bot
+
+[![RUS](https://img.shields.io/badge/README-Russian-blue.svg)](README.md)
+[![ENG](https://img.shields.io/badge/README-English-red.svg)](README.en.md)
+
 Telegram-бот для получения данных с официального сайта ЦБ РФ. Поддерживает функциональность по конвертации валют, получению курсов валют, ключевой ставки и оперативной информации.
 
 
