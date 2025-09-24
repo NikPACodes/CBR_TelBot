@@ -29,7 +29,7 @@ A Telegram bot for retrieving data from the official website of the Central Bank
 
 ## Peculiarities
 :exclamation: This bot requires a PostgreSQL database connection to work.
-- When the project is launched, the PostgreSQL database structure required for the bot to operate is created
+- When the project is launched, the PostgreSQL database structure required for the bot to operate is created  
   ***(if the structure already exists, this step is skipped)***
 - The bot works primarily with PostgreSQL data.  
   If information is missing from the database, the bot requests data from the Central Bank of the Russian Federation website and completes the missing information.
