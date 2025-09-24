@@ -54,12 +54,12 @@ A Telegram bot for retrieving data from the official website of the Central Bank
 
 
 ## DB structure
-|Table                | Name                       |
-|---------------------|----------------------------|
-| Users               | Пользователи               |
-| BotUsers            | Связь бота и пользователей |
-| CurrCodesDirectCBR  | Коды валют                 |
-| ExchangeRatesCBR    | Курсы валют                |
+|Table                | Name                                |
+|---------------------|-------------------------------------|
+| Users               | Users                               |
+| BotUsers            | Connection between a bot and a user |
+| CurrCodesDirectCBR  | Currency codes                      |
+| ExchangeRatesCBR    | Exchange rates                      |
 
 <p align="left">
  <img src="pictures/DB.png" alt="DB" width="450px"/>
@@ -175,23 +175,23 @@ or for further development in your own repository, create [Fork](https://github.
   ```
 
 
-## Примечание
-Основная цель данного бота - это создание шаблона для дальнейшей реализации более сложных проектов, с более интересным функционалом.  
-В дальнейшем будет расширения функционала данного шаблона в части:
-- Добавление поддержки других баз данных (MySQL, Redis)
-- Добавления оповещений
-- Проверка статусов и автоматическое блокирование пользователей
-- Логирование работы ПО
-- Доработка автоматизации обновления БД
-- Добавление Mini Apps
+## Note
+The main goal of this bot is to create a template for the further implementation of more complex projects with more interesting functionality.  
+In the future, the functionality of this template will be expanded in terms of:
+- Adding support for other databases (MySQL, Redis)
+- Adding notifications
+- Checking statuses and automatically blocking users
+- Logging software operation
+- Improvements to database update automation
+- Addition Mini Apps
 
 
 ## License
 MIT License - feel free to use, modify, and distribute this work as long as you give credit to the author.
 
 
-## Контрибьютинг
-1. Приветствуются любые улучшения — от исправлений багов до новых функций!
-2. Перед пушем убедитесь, что ваши изменения не ломают основную функциональность.
-3. Создайте pull request или [issues](https://github.com/NikPACodes/CBR_TelBot/issues) для обсуждения.
-4. Для собственного развития проекта или использования в качестве шаблона создавайте [Fork](https://github.com/NikPACodes/CBR_TelBot/fork) в свой репозиторий
+## Contributing
+1. Any improvements are welcome, from bug fixes to new features!
+2. Before pushing, make sure your changes don't break core functionality.
+3. Create a pull request or [issues](https://github.com/NikPACodes/CBR_TelBot/issues) for discussion.
+4. To develop your own project or use it as a template, create a [Fork](https://github.com/NikPACodes/CBR_TelBot/fork) to your repository.
