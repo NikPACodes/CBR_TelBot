@@ -2,12 +2,16 @@ import telebot
 from telebot import types
 import re
 from datetime import datetime, timezone
-from config import TOKEN, DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
+import os
+from dotenv import load_dotenv
 from extensions import CBRInfo
 import CBR_Exceptions as Exc
 import structure_database
 
-bot = telebot.TeleBot(TOKEN)
+# Загружаем переменные окружения
+load_dotenv()
+
+bot = telebot.TeleBot(os.environ['TOKEN'])
 
 command_list = '''/help - Список доступных команд
 /current_codes - Справочник доступных кодов валют
@@ -28,7 +32,9 @@ name_categ_op_inf = {'dkp':'Денежно-кредитная политика',
 clear_butt = telebot.types.ReplyKeyboardRemove()
 
 # Создание структур БД
-structure_database.create_structure_database(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
+structure_database.create_structure_database(os.environ['DB_NAME'], os.environ['DB_USER'],
+                                            os.environ['DB_PASSWORD'], os.environ['DB_HOST'],
+                                            os.environ['DB_PORT'])
 
 CBR_Bot = CBRInfo()
 

@@ -1,4 +1,5 @@
-from config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
+import os
+from dotenv import load_dotenv
 import json
 import requests
 from lxml import etree
@@ -7,6 +8,8 @@ import CBR_Exceptions as Exc
 import databases
 from databases import PostgreSQL
 
+# Загружаем переменные окружения
+load_dotenv()
 
 # Класс для преобразования XML
 class Convert:
@@ -79,13 +82,15 @@ class CBRInfo:
 
         # Подключение к БД
         try:
-            self._TestLocalDB = self.__PostgresDB.connection(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
+            self._TestLocalDB = self.__PostgresDB.connection(os.environ['DB_NAME'], os.environ['DB_USER'],
+                                                            os.environ['DB_PASSWORD'], os.environ['DB_HOST'],
+                                                            os.environ['DB_PORT'])
         except databases.DBException as err:
             print(err.message)
 
 
     # Регистрация нового пользователя
-    def add_user(self, i_user={}):
+    def add_user(self, i_user: dict):
         if i_user:
             try:
                 q_check_user = 'SELECT * FROM users WHERE id = %s'
