@@ -18,7 +18,7 @@ A Telegram bot for retrieving data from the official website of the Central Bank
     - [Table _ExchangeRatesCBR_](#table-exchangeratescbr)
   - [Installing and running](#installing-and-running)
     - [1. Cloning the repository and installing dependencies](#1-cloning-the-repository-and-installing-dependencies)
-    - [2. Setting up configurations _(config.py)_](#2-setting-up-configurations-configpy)
+    - [2. Setting environment variables _(.env)_](#2-setting-environment-variables-env)
     - [3. Launching the bot](#3-launching-the-bot)
   - [List of commands](#list-of-commands)
     - [Examples of use](#examples-of-use)
@@ -38,19 +38,19 @@ A Telegram bot for retrieving data from the official website of the Central Bank
 
 
 ## Project structure
-| File                  | Description                                                 |
-|-----------------------|-------------------------------------------------------------|
-| config.py             | Configuration: bot token and database connection parameters |
-| databases.py          | Connecting and working with a PostgreSQL database           |
-| CBR_Exceptions.py     | Class for exception handling                                |
-| extensions.py         | Basic functionality, parsing, and working with the API      |
-| requirements.txt      | List of dependencies                                        |
-| structure_database.py | Creating a DB structure                                     |
-| run.py                | Launching the bot, command handlers, keyboards              |
-| README.md             | Documentation in Russian                                    |
-| README.en.md          | Documentation in English                                    |
-| .gitignore            | Ignoring temporary files                                    |
-| LICENSE               | License                                                     |
+| File                  | Description                                                         |
+|-----------------------|---------------------------------------------------------------------|
+| .env                  | Environment variables: bot token and database connection parameters |
+| databases.py          | Connecting and working with a PostgreSQL database                   |
+| CBR_Exceptions.py     | Class for exception handling                                        |
+| extensions.py         | Basic functionality, parsing, and working with the API              |
+| requirements.txt      | List of dependencies                                                |
+| structure_database.py | Creating a DB structure                                             |
+| run.py                | Launching the bot, command handlers, keyboards                      |
+| README.md             | Documentation in Russian                                            |
+| README.en.md          | Documentation in English                                            |
+| .gitignore            | Ignoring temporary files                                            |
+| LICENSE               | License                                                             |
 
 
 ## DB structure
@@ -93,7 +93,7 @@ A Telegram bot for retrieving data from the official website of the Central Bank
   | NameRus   | Currency name (Russian) | 
 
 ### <u>Table _ExchangeRatesCBR_</u>
-  |Field       | Name                      |
+  |Field      | Name                       |
   |-----------|----------------------------|
   | ID_CBR    | CB Currency ID             |
   | Date      | Exchange rate date         |
@@ -113,18 +113,15 @@ or for further development in your own repository, create [Fork](https://github.
     cd CBR_TelBot
     pip install -r requirements.txt
 
-### 2. Setting up configurations _(config.py)_
-- You need to fill the `config.py` file with your own data:
+### 2. Setting environment variables _(.env)_
+- You need to fill the `.env` file with your own data:
   ```
-  # Личный токен телеграмм
   TOKEN = '*****'
-
-  # Параметры для подключения БД
-  DB_NAME     = '*****'
-  DB_USER     = '*****'
+  DB_NAME = '*****'
+  DB_USER = '*****'
   DB_PASSWORD = '*****'
-  DB_HOST     = '*****'
-  DB_PORT     = '*****'
+  DB_HOST = '*****'
+  DB_PORT = '*****'
   ```
 
   |Parameter      | Description                 |
